@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Move</title>
+    <style>
+ 
+        body{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .wrapper{
+            width: 100%;
+            margin: auto;
+            overflow: hidden;
+
+        }
+
+        .slider-container{
+            display: flex;
+            width: 100%;
+            height: 100vh;  
+        }
+        .slide{
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide h1{
+            font-size: 2rem;
+        }
+
+        .slide p{
+            padding: 0.1rem 0rem;
+            text-align: center;
+            width: 55%;
+            margin: 0 auto;
+            line-height: 1.5;
+            font-size: 1.2;
+        }
+     
+        .s1{
+           /* background-image: url('1.jpg');*/
+        }
+
+        .s2{
+            /*background-image: url('2.jpg');*/
+        }
+        .s3{
+            /*background-image: url('3.jpg');*/
+        }
+
+        #prev{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
+        }        
+
+        #next{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 20px;
+        }  
+
+        #next:hover, #prev:hover{
+            cursor: pointer;
+        }      
+        
+        .controls-dot{
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            display: flex;
+            transform: translateX(-50%);
+        }
+        .dot{
+            border: 1px solid black;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            margin: 0px 2px;
+        }
+        .active-dot{
+            background-color: black;
+        }
+
+        body div:nth-child(6){
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="slider-container">
+            <div class="slide s3" id="lastClone">
+                <h1>Headline 3</h1>
+                <p>Lorem1, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ipsa porro? Eius natus, qui hic
+                    porro nesciunt voluptate modi explicabo quod rerum repellat inventore consequatur, est suscipit enim
+                    assumenda laborum.</p>
+            </div>
+            <div class="slide s1">
+                <h1>Headline 1</h1>
+                <p>Lorem1, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ipsa porro? Eius natus, qui hic
+                    porro nesciunt voluptate modi explicabo quod rerum repellat inventore consequatur, est suscipit enim
+                    assumenda laborum.</p>
+            </div>
+            <div class="slide s2">
+                <h1>Headline 2</h1>
+                <p>Lorem1, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ipsa porro? Eius natus, qui hic
+                    porro nesciunt voluptate modi explicabo quod rerum repellat inventore consequatur, est suscipit enim
+                    assumenda laborum.</p>
+            </div>
+            <div class="slide s3">
+                <h1>Headline 3</h1>
+                <p>Lorem1, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ipsa porro? Eius natus, qui hic
+                    porro nesciunt voluptate modi explicabo quod rerum repellat inventore consequatur, est suscipit enim
+                    assumenda laborum.</p>
+            </div>
+            <div class="slide s1" id="firstClone">
+                <h1>Headline 1</h1>
+                <p>Lorem1, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ipsa porro? Eius natus, qui hic
+                    porro nesciunt voluptate modi explicabo quod rerum repellat inventore consequatur, est suscipit enim
+                    assumenda laborum.
+                </p>
+            </div>
+    
+        </div>
+        <button id="next">Next</button>
+        <button id="prev">Prev</button>    
+        <div class="controls-dot">
+            <div class="dot active-dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</body>
+    <script>
+        const sliderContainer = document.querySelector('.slider-container');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('#prev');
+        const nextBtn = document.querySelector('#next');
+        const dots = document.querySelectorAll('.dot');
+        let counter = 1;
+
+        //get size of client size of window
+        const size = slides[0].clientWidth;
+        //move first slider from clone to next
+        sliderContainer.style.transform = 'translateX(' + (-size * counter) + 'px)';
+
+        nextBtn.addEventListener('click', ()=>{
+            resetTimer();
+            nextSlide();
+            updateDot();
+        })
+
+        prevBtn.addEventListener('click', ()=>{
+            prevSlide();
+            updateDot();
+
+        })
+
+        function nextSlide(){
+            if (counter >= slides.length -1) {
+                return;
+            }
+            sliderContainer.style.transition = 'transform 0.4s ease-in-out';
+            counter ++;
+            sliderContainer.style.transform = 'translateX(' + (-size * counter) + 'px)';
+        }
+
+        function prevSlide(){
+            if (counter <= 0) {
+                return;
+            }
+            sliderContainer.style.transition = 'transform 0.4s ease-in-out';
+            counter --;
+            sliderContainer.style.transform = 'translateX(' + (-size * counter) + 'px)'; 
+        }
+
+        function updateDot(){
+            dots.forEach(dot =>{
+                dot.classList.remove('active-dot');
+            })
+            dots[counter -1].classList.add('active-dot');
+            
+        }
+
+        sliderContainer.addEventListener('transitionend',()=>{
+
+            if (slides[counter].id === 'firstClone') {
+                sliderContainer.style.transition = 'none';
+                counter = slides.length - counter;
+                console.log(counter);
+             
+                dots[counter -1].classList.add('active-dot');
+                sliderContainer.style.transform = 'translateX(' + (-size * counter) + 'px)';
+            }
+
+            if (slides[counter].id === 'lastClone') {
+                console.log('first clone');
+                sliderContainer.style.transition = 'none';
+                counter = slides.length - 2;
+                dots[counter -1].classList.add('active-dot');
+                sliderContainer.style.transform = 'translateX(' + (-size * counter) + 'px)';
+            }
+        })
+
+        function resetTimer() {
+            clearInterval(timer);
+            timer = setInterval(autoPlay, 3000);
+        }
+
+
+        function autoPlay() {
+            nextSlide();
+            updateDot();
+        }
+
+        let timer = setInterval(autoPlay, 3000);
+
+</script>
+</html>
